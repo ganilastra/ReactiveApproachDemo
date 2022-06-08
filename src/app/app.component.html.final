@@ -1,0 +1,33 @@
+<h1> Inventory With Reports</h1>
+<div *ngIf="itemsWithSearch$ |  async as items">
+  <div *ngFor="let item of items" class="container">
+    <div>{{item.id}}</div>
+    <div>{{item.name}}</div>
+    <div>{{item.price}}</div>
+  </div>
+</div>
+
+<div>
+  <h2>Filters</h2>
+  <div>
+    <select id="models" [(ngModel)]="selectedModel">
+      <option [value]="0">--Select--</option>
+      <option [value]="1">Lenovo</option>
+      <option [value]="2">Dell</option>
+    </select>
+  </div>
+
+  <div>
+    <input type="text" placeholder="Price From:" [(ngModel)]="priceStart">
+    <input type="text" placeholder="Price To:" [(ngModel)]="priceEnd">
+  </div>
+  <button (click)="goSearch()">Search</button>
+</div>
+
+<div>
+  <br />
+  <button (click)="goReport()">Send this Report</button>
+</div>
+
+<app-create-item [subject]="saveItem$"></app-create-item>
+
