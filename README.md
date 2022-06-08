@@ -1,4 +1,6 @@
 # ReactiveApproachDemo
+This illustrates the very basics of using REACTIVE approach in developing angular applications.
+This uses a DATA Stream to load inventory items and an ACTION Stream to Filter the data being displayed in the UI.
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 12.2.11.
 
