@@ -24,4 +24,10 @@
   <button (click)="goSearch()">Search</button>
 </div>
 
-<div><button (click)="goReport()">Send this Report</button></div>
+<div>
+  <br />
+  <button (click)="goReport()">Send this Report</button>
+</div>
+
+<app-create-item [subject]="saveItem$"></app-create-item>
+

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { BehaviorSubject, combineLatest, Subject } from 'rxjs';
-import { map, withLatestFrom } from 'rxjs/operators';
-import { FilterParams, InventoryService, Model } from './inventory.service';
+import { BehaviorSubject, combineLatest, merge, Subject } from 'rxjs';
+import { map, scan, withLatestFrom } from 'rxjs/operators';
+import { FilterParams, InventoryService, Item, Model } from './inventory.service';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -19,12 +19,27 @@ export class AppComponent {
   private searchSubject$ = new BehaviorSubject<FilterParams>(new FilterParams());
   searchAction$ = this.searchSubject$.asObservable();
 
-
   private goReport$ = new Subject<boolean>();
   goReportAction$ = this.goReport$.asObservable();
 
+  saveItem$ = new Subject<Item>();
+  saveItemAction$ = this.saveItem$.asObservable();
 
-  itemsWithSearch$ = combineLatest([this.items$, this.searchAction$]).pipe(map(([items, params]) => {
+  itemsWithAdditions$ = merge(this.items$, this.saveItemAction$).pipe(
+    scan((acc, value) => {
+      //this is the accumulator function(see rxjs scan for managing state)
+      if (value instanceof Array) // check first if is the object has fhcs otherwise this is the rowDataChange
+      {
+        return [...value]
+      }
+      else {
+        return [...acc, value];
+      }
+    }, [] as Item[]
+    )
+  );
+
+  itemsWithSearch$ = combineLatest([this.itemsWithAdditions$, this.searchAction$]).pipe(map(([items, params]) => {
     if (params) {
       if (params.model != Model.None) {
         items = items.filter(x => x.model === params.model);
@@ -41,13 +56,18 @@ export class AppComponent {
     return items;
   }));
 
-  report$ = combineLatest([this.goReportAction$, this.itemsWithSearch$]).pipe(
+  report$ = this.goReportAction$.pipe(
+    withLatestFrom(this.itemsWithSearch$),
     map(([action, items]) => {
       alert(`This Search results will be reported: ${JSON.stringify(items)}`);
     }));
 
+
   constructor(private inventoryService: InventoryService) {
     this.report$.subscribe();
+
+    this.saveItemAction$.subscribe(x =>
+      alert(`Item to be Saved: ${JSON.stringify(x)}`))
   }
 
 

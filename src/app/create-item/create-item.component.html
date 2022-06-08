@@ -1,0 +1,20 @@
+
+<div>
+  <h2>Add New Item in Inventory</h2>
+  <div> <input type="text" placeholder="New Item ID" [(ngModel)]="itemId"></div>
+  <div> <input type="text" placeholder="New Item Name" [(ngModel)]="itemName"></div>
+  <div>
+    Model:
+    <select id="models" [(ngModel)]="model">
+      <option [value]="1">Lenovo</option>
+      <option [value]="2">Dell</option>
+    </select>
+  </div>
+
+  <div>
+    <input type="text" placeholder="Price:"  [(ngModel)]="price">
+  </div>
+
+
+  <button (click)="goAddItem()">Add Item</button>
+</div>
