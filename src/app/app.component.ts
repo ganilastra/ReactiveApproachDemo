@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { BehaviorSubject, combineLatest } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, Subject } from 'rxjs';
+import { map, withLatestFrom } from 'rxjs/operators';
 import { FilterParams, InventoryService, Model } from './inventory.service';
 @Component({
   selector: 'app-root',
@@ -20,6 +20,10 @@ export class AppComponent {
   searchAction$ = this.searchSubject$.asObservable();
 
 
+  private goReport$ = new Subject<boolean>();
+  goReportAction$ = this.goReport$.asObservable();
+
+
   itemsWithSearch$ = combineLatest([this.items$, this.searchAction$]).pipe(map(([items, params]) => {
     if (params) {
       if (params.model != Model.None) {
@@ -34,14 +38,25 @@ export class AppComponent {
         items = items.filter(x => x.price >= params.priceEnd);
       }
     }
-   return items;
-  }))
+    return items;
+  }));
+
+  report$ = combineLatest([this.goReportAction$, this.itemsWithSearch$]).pipe(
+    map(([action, items]) => {
+      alert(`This Search results will be reported: ${JSON.stringify(items)}`);
+    }));
 
   constructor(private inventoryService: InventoryService) {
+    this.report$.subscribe();
   }
 
 
   goSearch() {
     this.searchSubject$.next({ model: +this.selectedModel, priceStart: +this.priceStart, priceEnd: +this.priceEnd } as FilterParams)
+  }
+
+
+  goReport() {
+    this.goReport$.next(true);
   }
 }

@@ -1,3 +1,4 @@
+<h1> Inventory With Reports</h1>
 <div *ngIf="itemsWithSearch$ |  async as items">
   <div *ngFor="let item of items" class="container">
     <div>{{item.id}}</div>
@@ -22,3 +23,5 @@
   </div>
   <button (click)="goSearch()">Search</button>
 </div>
+
+<div><button (click)="goReport()">Send this Report</button></div>
